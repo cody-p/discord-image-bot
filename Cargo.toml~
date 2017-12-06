@@ -1,0 +1,12 @@
+[package]
+name = "discord-image-bot"
+version = "0.1.0"
+authors = ["Cody Paschich <personal.voidlurker.net>"]
+
+[dependencies]
+serenity = "0.4"
+
+[serenity]
+git = "https://github.com/zeyla/serenity.git"
+default-features = false
+features = ["builder", "cache", "client", "framework", "standard_framework", "utils", "model"]
