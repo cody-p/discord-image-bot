@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::Path;
 use serenity::model::*;
+use global_data::*;
 
 pub fn confirm_dir(path: &str) {
     if !Path::new(path).exists() {
@@ -12,9 +13,13 @@ pub fn confirm_dir(path: &str) {
 }
 
 pub fn server_path(path: GuildId) -> String {
-    return format!("./servers/{}", path);
+    return format!("{}/{}",SERVER_PATH, path);
 }
 
 pub fn confirm_server(path: GuildId) {
     confirm_dir(&server_path(path));
+}
+
+pub fn is_owner(id: UserId) -> bool {
+    return format!("{}", id) == *OWNER;
 }

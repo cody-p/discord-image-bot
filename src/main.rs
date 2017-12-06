@@ -1,38 +1,33 @@
 #[macro_use] extern crate serenity;
+#[macro_use] extern crate lazy_static;
 
+mod global_data;
 mod util;
 mod events;
+mod commands;
 
 use util::*;
 use events::*;
+use commands::*;
+use global_data::*;
 
-use std::env;
 use serenity::prelude::*;
 use serenity::framework::standard::StandardFramework;
 
-fn init() {
-    confirm_dir("./servers");
-}
+
 
 fn main() {
-    init();
-    let token = env::var("DISCORD_TOKEN")
-        .expect("Expected a token in the environment");
-    let mut client = Client::new(&token, Handler);    
+    println!("Owner ID = {}", *OWNER);
+    confirm_dir(SERVER_PATH);
+    
+    let mut client = Client::new(&TOKEN, Handler);
     client.with_framework(StandardFramework::new()
         .configure(|c| c.prefix("~")) // set the bot's prefix to "~"
-        .on("ping", ping)
-        .on("test", test));
+        .on("submit", submit)
+        .on("set-output", set_output)
+        );
     println!("Starting...");
     if let Err(why) = client.start() {
         println!("Client error: {:?}", why);
     }
 }
-
-command!(ping(_context, message) {
-    let _ = message.reply("Pong!");
-});
-
-command!(test(_context, message) {
-    let _ = message.reply("F");
-});
