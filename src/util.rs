@@ -2,6 +2,10 @@ use std::fs;
 use std::path::Path;
 use serenity::model::*;
 use global_data::*;
+use serenity::CACHE;
+use std::io::Read;
+use std::result::Result;
+use std::sync::*;
 
 pub fn confirm_dir(path: &str) {
     if !Path::new(path).exists() {
@@ -22,4 +26,40 @@ pub fn confirm_server(path: GuildId) {
 
 pub fn is_owner(id: UserId) -> bool {
     return format!("{}", id) == *OWNER;
+}
+
+pub fn parse_channel_from_file(path: &str) -> Result<Arc<RwLock<GuildChannel>>, String> {
+    match fs::File::open(path) {
+        Err(why) => {
+            return Err(format!("Error opening channel file: {}", why));
+        },
+        Ok(mut file) => {
+            let mut buffer = String::new();
+            if let Err(why) = file.read_to_string(&mut buffer) {
+                return Err(format!("Failed to read channel file to string: {}", why));
+            } else {
+                if let Ok(channel_int) = buffer.parse::<u64>() {
+                    let channel_id = ChannelId(channel_int);
+                    if let Some(channel) = CACHE.read().unwrap().guild_channel(channel_id) {
+                        return Ok(channel);
+                    } else {
+                        return Err(format!("Could not find specified channel in cache."));
+                    }
+                } else {
+                    return Err(format!("Could not parse integer '{}' into a channel string.", buffer));
+                }
+            }
+        }
+    }
+}
+pub fn send_to_status_channel(msg: &str) {
+    match parse_channel_from_file(STATUS_CHANNEL) {
+        Ok(channel) => {
+            let _ = channel.read().unwrap().send_message(|m| m
+                .content(msg));
+        },
+        Err(_why) => {
+            println!("Not sending status messages. The following error occured: {}", _why);
+        }
+    }
 }

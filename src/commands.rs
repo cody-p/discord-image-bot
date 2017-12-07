@@ -33,6 +33,37 @@ command!(set_output(_context, message) {
 });
 
 // Owner commands
+command!(die(context, message) {
+    if is_owner(message.author.id) {
+        let _ = message.reply("Alright then.");
+        send_to_status_channel("Shutting off...");
+        if let Err(why) = context.quit() {
+            println!("Somehow failed to shut down: {}", why);
+        }
+    } else {
+        let _ = message.reply("wow rude");
+    }
+});
+
+command!(set_status(_context, message) {
+    if is_owner(message.author.id) {
+        let path = format!("{}", STATUS_CHANNEL);
+        
+        if let Ok(mut file) = fs::File::create(path) {
+            if let Err(why) = write!(file, "{}", message.channel_id) {
+                println!("Failed to write status_channel: {}", why);
+            } else {
+                println!("Made the status_channel channel.");
+                let _ = message.reply(&format!("Set the status channel to ``{}``.", message.channel_id));
+            }
+        } else {
+            println!("Couldn't make the status_channel file.");
+        }
+    } else {
+        let _ = message.reply("Only the bot's owner can use this command!");
+    }
+});
+
 command!(submit(_context, message) {
     if is_owner(message.author.id) {
         if let Ok(servers) = fs::read_dir(SERVER_PATH) {
@@ -58,11 +89,13 @@ command!(submit(_context, message) {
                                                 let channel_id = ChannelId(channel_int);
                                                 if let Some(channel) = CACHE.read().unwrap().guild_channel(channel_id) {
                                                     println!("Sending message to {}.", channel.read().unwrap().name);
+                                                    let message_str = &message.content;
+                                                    println!("Submission:\n{}", message_str);
                                                     let _ = channel.read().unwrap().send_message(|m| m
-                                                        .content("Gottem")
+                                                        .content("")
                                                         .tts(false)
                                                         .embed(|e| e
-                                                            .title("This is an embed")
+                                                            .title(format!("Broadcast from {}", message.author.name))
                                                             .description("With a description")));
                                                     
                                                 } else {
@@ -93,4 +126,3 @@ command!(submit(_context, message) {
         let _ = message.reply("Only the bot's owner can use this command!'");
     }
 });
-

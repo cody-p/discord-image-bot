@@ -19,12 +19,15 @@ use serenity::framework::standard::StandardFramework;
 fn main() {
     println!("Owner ID = {}", *OWNER);
     confirm_dir(SERVER_PATH);
+    confirm_dir(SETTINGS_PATH);
     
     let mut client = Client::new(&TOKEN, Handler);
     client.with_framework(StandardFramework::new()
         .configure(|c| c.prefix("~")) // set the bot's prefix to "~"
         .on("submit", submit)
         .on("set-output", set_output)
+        .on("set-status", set_status)
+        .on("die", die)
         );
     println!("Starting...");
     if let Err(why) = client.start() {

@@ -22,6 +22,7 @@ impl EventHandler for Handler {
     fn on_ready(&self, _: Context, ready: Ready) {
         let user = &ready.user;
         println!("{} is connected!", user.name);
+        send_to_status_channel("I've come online!");
     }
     
     //Created or was added to a guild
