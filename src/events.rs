@@ -39,4 +39,21 @@ impl EventHandler for Handler {
             println!("Failed to delete path '{}': {}", path, why)
         }
     }
+    
+    //message edit
+    fn on_message_update(&self, _: Context, message: event::MessageUpdateEvent) {
+        let mut embed_count = 0;
+        for _e in &message.embeds {
+            embed_count+=1;
+        }
+        let embed_count = embed_count;
+        
+        let mut attachment_count = 0;
+        for _a in &message.attachments {
+            attachment_count+=1;
+        }
+        let attachment_count = attachment_count;
+        
+        println!("Edit: {} embeds, {} attachments.", embed_count, attachment_count);
+    }
 }

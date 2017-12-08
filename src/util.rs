@@ -5,7 +5,8 @@ use global_data::*;
 use serenity::CACHE;
 use std::io::Read;
 use std::result::Result;
-use std::sync::*;
+use std::sync::Arc;
+use std::sync::RwLock;
 
 pub fn confirm_dir(path: &str) {
     if !Path::new(path).exists() {
@@ -63,3 +64,6 @@ pub fn send_to_status_channel(msg: &str) {
         }
     }
 }
+
+
+
