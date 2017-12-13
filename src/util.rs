@@ -65,5 +65,10 @@ pub fn send_to_status_channel(msg: &str) {
     }
 }
 
+pub fn status_mirror(msg: &str) {
+	println!("{}",msg);
+	send_to_status_channel(msg);
+}
+
 
 

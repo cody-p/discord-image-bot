@@ -21,22 +21,28 @@ impl EventHandler for Handler {
     ///The bot has successfully connected.
     fn on_ready(&self, _: Context, ready: Ready) {
         let user = &ready.user;
-        println!("{} is connected!", user.name);
-        send_to_status_channel("I've come online!");
+        status_mirror(&format!("{} is connected!", user.name));
+    }
+    
+    ///The bot has resumed its connection.
+    fn on_resume(&self, _: Context, _: event::ResumedEvent) {
+        status_mirror("Resume occured!");
     }
     
     //Created or was added to a guild
     fn on_guild_create(&self, _: Context, guild: Guild, _is_new: bool) {
-        println!("Guild added: {} - {}", guild.name, guild.id);
+        status_mirror(&format!("Guild added: {} - {}", guild.name, guild.id));
         confirm_server(guild.id);
     }
     
     // guild was deleted
     fn on_guild_delete(&self, _: Context, guild: PartialGuild, _: Option<Arc<RwLock<Guild>>>) { 
-        println!("Guild deleted: {} - {}", guild.name, guild.id);
+        let first_msg = format!("Guild deleted: {} - {}", guild.name, guild.id);
         let path = server_path(guild.id);
         if let Err(why) = fs::remove_dir(&path) {
-            println!("Failed to delete path '{}': {}", path, why)
+            status_mirror(&format!("{}\nFailed to delete path '{}': {}",first_msg, path, why));
+        } else {
+        	status_mirror(&first_msg);
         }
     }
     
