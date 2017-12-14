@@ -1,6 +1,6 @@
 [package]
 name = "discord-image-bot"
-version = "0.1.0"
+version = "0.1.5"
 authors = ["Cody Paschich <personal.voidlurker.net>"]
 
 [dependencies]

@@ -1,6 +1,6 @@
 [root]
 name = "discord-image-bot"
-version = "0.1.0"
+version = "0.1.5"
 dependencies = [
  "lazy_static 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serenity 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -21,7 +21,7 @@ impl EventHandler for Handler {
     ///The bot has successfully connected.
     fn on_ready(&self, _: Context, ready: Ready) {
         let user = &ready.user;
-        status_mirror(&format!("{} is connected!", user.name));
+        status_mirror(&format!("{} is connected!\nCurrently ver {}", user.name, "0.1.5"));
     }
     
     ///The bot has resumed its connection.
