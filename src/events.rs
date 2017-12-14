@@ -25,8 +25,8 @@ impl EventHandler for Handler {
     }
     
     ///The bot has resumed its connection.
-    fn on_resume(&self, _: Context, _: event::ResumedEvent) {
-        status_mirror("Resume occured!");
+    fn on_resume(&self, _: Context, event: event::ResumedEvent) {
+        status_mirror(&format!("Resume occured:\n```\n{:?}```", event));
     }
     
     //Created or was added to a guild
