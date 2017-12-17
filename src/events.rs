@@ -3,14 +3,14 @@ use util::*;
 
 use std::fs;
 use std::sync::Arc;
-use std::sync::RwLock;
 use serenity::prelude::*;
 use serenity::model::*;
+use serenity::model::prelude::*;
 
 pub struct Handler;
 impl EventHandler for Handler {
 
-    fn on_message(&self, _: Context, msg: Message) {
+    fn message(&self, _: Context, msg: Message) {
         println!("Message received:
         {author:>width$}
         {message:>width$}\n"
@@ -19,24 +19,24 @@ impl EventHandler for Handler {
     }
     
     ///The bot has successfully connected.
-    fn on_ready(&self, _: Context, ready: Ready) {
+    fn ready(&self, _: Context, ready: Ready) {
         let user = &ready.user;
         status_mirror(&format!("{} is connected!\nCurrently ver {}", user.name, "0.1.5"));
     }
     
     ///The bot has resumed its connection.
-    fn on_resume(&self, _: Context, event: event::ResumedEvent) {
+    fn resume(&self, _: Context, event: event::ResumedEvent) {
         status_mirror(&format!("Resume occured:\n```\n{:?}```", event));
     }
     
     //Created or was added to a guild
-    fn on_guild_create(&self, _: Context, guild: Guild, _is_new: bool) {
+    fn guild_create(&self, _: Context, guild: Guild, _is_new: bool) {
         status_mirror(&format!("Guild added: {} - {}", guild.name, guild.id));
         confirm_server(guild.id);
     }
     
     // guild was deleted
-    fn on_guild_delete(&self, _: Context, guild: PartialGuild, _: Option<Arc<RwLock<Guild>>>) { 
+    fn guild_delete(&self, _: Context, guild: PartialGuild, _: Option<Arc<RwLock<Guild>>>) { 
         let first_msg = format!("Guild deleted: {} - {}", guild.name, guild.id);
         let path = server_path(guild.id);
         if let Err(why) = fs::remove_dir(&path) {
@@ -47,7 +47,7 @@ impl EventHandler for Handler {
     }
     
     //message edit
-    fn on_message_update(&self, _: Context, message: event::MessageUpdateEvent) {
+    fn message_update(&self, _: Context, message: event::MessageUpdateEvent) {
         let mut embed_count = 0;
         for _e in &message.embeds {
             embed_count+=1;

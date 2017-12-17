@@ -1,12 +1,13 @@
 use std::fs;
 use std::path::Path;
-use serenity::model::*;
+use serenity::model::id::*;
+use serenity::model::prelude::*;
+use serenity::prelude::*;
 use global_data::*;
 use serenity::CACHE;
 use std::io::Read;
 use std::result::Result;
 use std::sync::Arc;
-use std::sync::RwLock;
 
 pub fn confirm_dir(path: &str) {
     if !Path::new(path).exists() {
@@ -41,7 +42,7 @@ pub fn parse_channel_from_file(path: &str) -> Result<Arc<RwLock<GuildChannel>>, 
             } else {
                 if let Ok(channel_int) = buffer.parse::<u64>() {
                     let channel_id = ChannelId(channel_int);
-                    if let Some(channel) = CACHE.read().unwrap().guild_channel(channel_id) {
+                    if let Some(channel) = CACHE.read().guild_channel(channel_id) {
                         return Ok(channel);
                     } else {
                         return Err(format!("Could not find specified channel in cache."));
@@ -56,7 +57,7 @@ pub fn parse_channel_from_file(path: &str) -> Result<Arc<RwLock<GuildChannel>>, 
 pub fn send_to_status_channel(msg: &str) {
     match parse_channel_from_file(STATUS_CHANNEL) {
         Ok(channel) => {
-            let _ = channel.read().unwrap().send_message(|m| m
+            let _ = channel.read().send_message(|m| m
                 .content(msg));
         },
         Err(_why) => {
